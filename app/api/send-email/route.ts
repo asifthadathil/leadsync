@@ -145,7 +145,7 @@ async function sendEmailViaGraphAPI(
     };
 
     const response = await axios.post(
-      'https://graph.microsoft.com/v1.0/me/sendMail',
+      `https://graph.microsoft.com/v1.0/users/${encodeURIComponent(SENDER_EMAIL || '')}/sendMail`,
       emailMessage,
       {
         headers: {
