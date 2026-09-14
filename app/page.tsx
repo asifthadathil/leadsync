@@ -199,11 +199,46 @@ export default function Home() {
     <main>
       <div className="container">
         <div className="header">
-          <img
-            src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAyAAAABLCAYAAABbEXCEAAAA2klEQVR4nO3QMQEAAADCoPVPbQhfoAAAAHgwB2nKzVa+3+85v/Pn7zk/8+fvOT/z5+85P/Pn7zk/8+fvOT/z5+85P/Pn7zk/8+fvOT/z5+85P/Pn7zk/8+fvOT/z5+85P/Pn7zk/8+fvOT/z5+85P/Pn7zk/8+fvOT/z5+85P/Pn7zk/8+fvOT/z5+85P/Pn7zk/8+fvOT/z5+85P/Pn7zk/8+fvOT/z5+85P/Pn7zk/8+fvOT/z5+85P/Pn7zk/8+fvOT/z5+85P/Pn7zk/8+fvOT/z5+85P/Pn7zk/8+fvOQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAP+bPUwBQO23EqIAAAAASUVORK5CYII="
-            alt="iDTRONIC Logo"
+          <svg
             className="logo"
-          />
+            viewBox="0 0 420 100"
+            role="img"
+            aria-label="iDTRONIC Logo"
+          >
+            <rect
+              x="3"
+              y="3"
+              width="414"
+              height="94"
+              rx="22"
+              fill="none"
+              stroke="#1e3a6f"
+              strokeWidth="6"
+            />
+            <rect x="36" y="22" width="18" height="18" rx="3" fill="#f39200" />
+            <rect x="36" y="48" width="18" height="32" rx="3" fill="#f39200" />
+            <text
+              x="62"
+              y="76"
+              fontSize="62"
+              fontWeight={800}
+              fontFamily="Arial, Helvetica, sans-serif"
+              fill="#f39200"
+            >
+              D
+            </text>
+            <text
+              x="134"
+              y="72"
+              fontSize="50"
+              fontWeight={800}
+              letterSpacing="1"
+              fontFamily="Arial, Helvetica, sans-serif"
+              fill="#1e3a6f"
+            >
+              TRONIC
+            </text>
+          </svg>
           <h1 className="app-title">iDTRONIC LeadSync</h1>
           <p className="help-text">Event Lead Capture System</p>
         </div>

@@ -56,8 +56,8 @@ main {
 
 .logo {
   height: 50px;
+  width: auto;
   margin-bottom: 15px;
-  object-fit: contain;
 }
 
 .app-title {
