@@ -107,7 +107,8 @@ label {
 input[type='text'],
 input[type='email'],
 input[type='tel'],
-select {
+select,
+textarea {
   width: 100%;
   padding: 12px;
   border: 2px solid #e0e0e0;
@@ -117,10 +118,16 @@ select {
   font-family: inherit;
 }
 
+textarea {
+  resize: vertical;
+  min-height: 90px;
+}
+
 input[type='text']:focus,
 input[type='email']:focus,
 input[type='tel']:focus,
-select:focus {
+select:focus,
+textarea:focus {
   outline: none;
   border-color: #f39200;
   box-shadow: 0 0 0 3px rgba(243, 146, 0, 0.1);

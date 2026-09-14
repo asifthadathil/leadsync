@@ -15,6 +15,7 @@ interface FormData {
   country: string;
   location: string;
   inquiryCategory: string;
+  customerQuery: string;
 }
 
 interface StatusMessage {
@@ -33,6 +34,7 @@ export default function Home() {
     country: '',
     location: '',
     inquiryCategory: '',
+    customerQuery: '',
   });
 
   const [status, setStatus] = useState<StatusMessage>({ type: null, text: '' });
@@ -63,7 +65,7 @@ export default function Home() {
   };
 
   const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
   ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
@@ -175,6 +177,7 @@ export default function Home() {
             country: '',
             location: '',
             inquiryCategory: '',
+            customerQuery: '',
           });
           setStatus({ type: null, text: '' });
           setShowPdfDownload(false);
@@ -312,6 +315,17 @@ export default function Home() {
             </select>
           </div>
 
+          <div className="form-group">
+            <label>Customer Query</label>
+            <textarea
+              name="customerQuery"
+              placeholder="Describe the customer's question or request"
+              rows={4}
+              value={formData.customerQuery}
+              onChange={handleInputChange}
+            />
+          </div>
+
           <div className="button-group">
             <button
               type="submit"
@@ -389,6 +403,10 @@ export default function Home() {
               <tr>
                 <td style={{ border: '1px solid #ccc', padding: '8px', fontWeight: 'bold' }}>Inquiry Category</td>
                 <td style={{ border: '1px solid #ccc', padding: '8px' }}>{formData.inquiryCategory}</td>
+              </tr>
+              <tr>
+                <td style={{ border: '1px solid #ccc', padding: '8px', fontWeight: 'bold' }}>Customer Query</td>
+                <td style={{ border: '1px solid #ccc', padding: '8px', whiteSpace: 'pre-wrap' }}>{formData.customerQuery}</td>
               </tr>
               <tr>
                 <td style={{ border: '1px solid #ccc', padding: '8px', fontWeight: 'bold' }}>Timestamp</td>

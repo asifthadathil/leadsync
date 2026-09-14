@@ -10,6 +10,7 @@ interface FormData {
   country: string;
   location: string;
   inquiryCategory: string;
+  customerQuery: string;
 }
 
 interface RequestBody {
@@ -98,6 +99,7 @@ function buildEmailBody(formData: FormData, eventName: string, timestamp: string
             <tr><td class="label">Country</td><td>${formData.country}</td></tr>
             <tr><td class="label">Location</td><td>${formData.location}</td></tr>
             <tr><td class="label">Inquiry Category</td><td>${formData.inquiryCategory}</td></tr>
+            <tr><td class="label">Customer Query</td><td style="white-space: pre-wrap;">${formData.customerQuery}</td></tr>
             <tr><td class="label">Submitted</td><td>${timestamp}</td></tr>
           </table>
 
