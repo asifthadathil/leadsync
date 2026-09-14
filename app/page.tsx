@@ -4,17 +4,14 @@ import { useState, useEffect, useRef } from 'react';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 import axios from 'axios';
-import Image from 'next/image';
 
 interface FormData {
-  firstName: string;
-  lastName: string;
+  fullName: string;
   companyName: string;
   email: string;
   mobileNumber: string;
-  country: string;
-  location: string;
   inquiryCategory: string;
+  customerQuery: string;
 }
 
 interface StatusMessage {
@@ -25,14 +22,12 @@ interface StatusMessage {
 export default function Home() {
   const [eventName, setEventName] = useState('');
   const [formData, setFormData] = useState<FormData>({
-    firstName: '',
-    lastName: '',
+    fullName: '',
     companyName: '',
     email: '',
     mobileNumber: '',
-    country: '',
-    location: '',
     inquiryCategory: '',
+    customerQuery: '',
   });
 
   const [status, setStatus] = useState<StatusMessage>({ type: null, text: '' });
@@ -40,7 +35,6 @@ export default function Home() {
   const [pdfBlob, setPdfBlob] = useState<Blob | null>(null);
   const [timestamp, setTimestamp] = useState('');
   const formRef = useRef<HTMLDivElement>(null);
-  const logoRef = useRef<HTMLImageElement>(null);
 
   // Load event name from localStorage
   useEffect(() => {
@@ -63,7 +57,7 @@ export default function Home() {
   };
 
   const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
   ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
@@ -105,7 +99,6 @@ export default function Home() {
         heightLeft -= pageHeight;
       }
 
-      const filename = `LeadSync_${eventName || 'Event'}_${new Date().toISOString().split('T')[0]}.pdf`;
       const blob = pdf.output('blob');
       return blob;
     } catch (error) {
@@ -167,14 +160,12 @@ export default function Home() {
         // Reset form after 2 seconds
         setTimeout(() => {
           setFormData({
-            firstName: '',
-            lastName: '',
+            fullName: '',
             companyName: '',
             email: '',
             mobileNumber: '',
-            country: '',
-            location: '',
             inquiryCategory: '',
+            customerQuery: '',
           });
           setStatus({ type: null, text: '' });
           setShowPdfDownload(false);
@@ -196,17 +187,18 @@ export default function Home() {
     <main>
       <div className="container">
         <div className="header">
-          <img
-            src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAyAAAABLCAYAAABbEXCEAAAA2klEQVR4nO3QMQEAAADCoPVPbQhfoAAAAHgwB2nKzVa+3+85v/Pn7zk/8+fvOT/z5+85P/Pn7zk/8+fvOT/z5+85P/Pn7zk/8+fvOT/z5+85P/Pn7zk/8+fvOT/z5+85P/Pn7zk/8+fvOT/z5+85P/Pn7zk/8+fvOT/z5+85P/Pn7zk/8+fvOT/z5+85P/Pn7zk/8+fvOT/z5+85P/Pn7zk/8+fvOT/z5+85P/Pn7zk/8+fvOT/z5+85P/Pn7zk/8+fvOT/z5+85P/Pn7zk/8+fvOT/z5+85P/Pn7zk/8+fvOQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAP+bPUwBQO23EqIAAAAASUVORK5CYII="
-            alt="iDTRONIC Logo"
-            className="logo"
-          />
-          <h1 className="app-title">iDTRONIC LeadSync</h1>
-          <p className="help-text">Event Lead Capture System</p>
+          <div className="brand-logo" aria-label="iDTRONIC">
+            <span className="brand-logo-mark">iD</span>
+            <span className="brand-logo-word">TRONIC</span>
+          </div>
+          <h1 className="app-title">LeadSync</h1>
+          <p className="help-text">Event Lead Capture</p>
         </div>
 
         <div className="form-group">
-          <label className="event-label">Event Name</label>
+          <label className="field-label">
+            Event Name <span className="required-mark">*</span>
+          </label>
           <input
             type="text"
             className="event-name-input"
@@ -219,41 +211,30 @@ export default function Home() {
         <form onSubmit={handleSubmit}>
           <div className="two-column">
             <div className="form-group">
-              <label>First Name</label>
+              <label className="field-label">Full Name</label>
               <input
                 type="text"
-                name="firstName"
-                placeholder="First Name"
-                value={formData.firstName}
+                name="fullName"
+                placeholder="Full Name"
+                value={formData.fullName}
                 onChange={handleInputChange}
               />
             </div>
             <div className="form-group">
-              <label>Last Name</label>
+              <label className="field-label">Company</label>
               <input
                 type="text"
-                name="lastName"
-                placeholder="Last Name"
-                value={formData.lastName}
+                name="companyName"
+                placeholder="Company Name"
+                value={formData.companyName}
                 onChange={handleInputChange}
               />
             </div>
-          </div>
-
-          <div className="form-group">
-            <label>Company Name</label>
-            <input
-              type="text"
-              name="companyName"
-              placeholder="Company Name"
-              value={formData.companyName}
-              onChange={handleInputChange}
-            />
           </div>
 
           <div className="two-column">
             <div className="form-group">
-              <label>Email</label>
+              <label className="field-label">Email</label>
               <input
                 type="email"
                 name="email"
@@ -263,7 +244,7 @@ export default function Home() {
               />
             </div>
             <div className="form-group">
-              <label>Mobile Number</label>
+              <label className="field-label">Mobile</label>
               <input
                 type="tel"
                 name="mobileNumber"
@@ -274,31 +255,10 @@ export default function Home() {
             </div>
           </div>
 
-          <div className="two-column">
-            <div className="form-group">
-              <label>Country</label>
-              <input
-                type="text"
-                name="country"
-                placeholder="Country"
-                value={formData.country}
-                onChange={handleInputChange}
-              />
-            </div>
-            <div className="form-group">
-              <label>Location</label>
-              <input
-                type="text"
-                name="location"
-                placeholder="Location"
-                value={formData.location}
-                onChange={handleInputChange}
-              />
-            </div>
-          </div>
-
           <div className="form-group">
-            <label>Inquiry Category *</label>
+            <label className="field-label">
+              Inquiry Category <span className="required-mark">*</span>
+            </label>
             <select
               name="inquiryCategory"
               value={formData.inquiryCategory}
@@ -310,6 +270,17 @@ export default function Home() {
               <option value="IoT">IoT</option>
               <option value="RFID Tag/Labels">RFID Tag / Labels</option>
             </select>
+          </div>
+
+          <div className="form-group">
+            <label className="field-label">Customer Query</label>
+            <textarea
+              name="customerQuery"
+              placeholder="Describe the customer's question or request"
+              rows={4}
+              value={formData.customerQuery}
+              onChange={handleInputChange}
+            />
           </div>
 
           <div className="button-group">
@@ -347,55 +318,76 @@ export default function Home() {
           <div className="timestamp">{timestamp}</div>
         </form>
 
-        {/* Hidden div for PDF generation */}
-        <div ref={formRef} style={{ display: 'none', padding: '20px' }}>
-          <div style={{ textAlign: 'center', marginBottom: '20px' }}>
-            <strong>iDTRONIC LeadSync</strong>
+        <p className="footer-note">iDTRONIC GmbH &middot; Event Lead Capture System</p>
+
+        {/* Off-screen letterhead used to render the branded PDF (html2canvas cannot render display:none elements) */}
+        <div
+          ref={formRef}
+          className="pdf-page"
+          style={{
+            position: 'absolute',
+            top: 0,
+            left: '-9999px',
+            width: '780px',
+          }}
+        >
+          <div className="pdf-header">
+            <div className="pdf-logo">
+              <span className="pdf-logo-mark">iD</span>
+              <span className="pdf-logo-word">TRONIC</span>
+            </div>
+            <div className="pdf-header-text">
+              <div className="pdf-doc-title">LEAD CAPTURE REPORT</div>
+              <div className="pdf-doc-sub">
+                {eventName || 'Event'} &middot; {timestamp}
+              </div>
+            </div>
           </div>
-          <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+
+          <div className="pdf-section-title">Contact Information</div>
+          <table className="pdf-table">
             <tbody>
               <tr>
-                <td style={{ border: '1px solid #ccc', padding: '8px', fontWeight: 'bold' }}>Event Name</td>
-                <td style={{ border: '1px solid #ccc', padding: '8px' }}>{eventName}</td>
+                <td className="pdf-label">Full Name</td>
+                <td>{formData.fullName || '—'}</td>
               </tr>
               <tr>
-                <td style={{ border: '1px solid #ccc', padding: '8px', fontWeight: 'bold' }}>First Name</td>
-                <td style={{ border: '1px solid #ccc', padding: '8px' }}>{formData.firstName}</td>
+                <td className="pdf-label">Company</td>
+                <td>{formData.companyName || '—'}</td>
               </tr>
               <tr>
-                <td style={{ border: '1px solid #ccc', padding: '8px', fontWeight: 'bold' }}>Last Name</td>
-                <td style={{ border: '1px solid #ccc', padding: '8px' }}>{formData.lastName}</td>
+                <td className="pdf-label">Email</td>
+                <td>{formData.email || '—'}</td>
               </tr>
               <tr>
-                <td style={{ border: '1px solid #ccc', padding: '8px', fontWeight: 'bold' }}>Company Name</td>
-                <td style={{ border: '1px solid #ccc', padding: '8px' }}>{formData.companyName}</td>
-              </tr>
-              <tr>
-                <td style={{ border: '1px solid #ccc', padding: '8px', fontWeight: 'bold' }}>Email</td>
-                <td style={{ border: '1px solid #ccc', padding: '8px' }}>{formData.email}</td>
-              </tr>
-              <tr>
-                <td style={{ border: '1px solid #ccc', padding: '8px', fontWeight: 'bold' }}>Mobile Number</td>
-                <td style={{ border: '1px solid #ccc', padding: '8px' }}>{formData.mobileNumber}</td>
-              </tr>
-              <tr>
-                <td style={{ border: '1px solid #ccc', padding: '8px', fontWeight: 'bold' }}>Country</td>
-                <td style={{ border: '1px solid #ccc', padding: '8px' }}>{formData.country}</td>
-              </tr>
-              <tr>
-                <td style={{ border: '1px solid #ccc', padding: '8px', fontWeight: 'bold' }}>Location</td>
-                <td style={{ border: '1px solid #ccc', padding: '8px' }}>{formData.location}</td>
-              </tr>
-              <tr>
-                <td style={{ border: '1px solid #ccc', padding: '8px', fontWeight: 'bold' }}>Inquiry Category</td>
-                <td style={{ border: '1px solid #ccc', padding: '8px' }}>{formData.inquiryCategory}</td>
-              </tr>
-              <tr>
-                <td style={{ border: '1px solid #ccc', padding: '8px', fontWeight: 'bold' }}>Timestamp</td>
-                <td style={{ border: '1px solid #ccc', padding: '8px' }}>{timestamp}</td>
+                <td className="pdf-label">Mobile</td>
+                <td>{formData.mobileNumber || '—'}</td>
               </tr>
             </tbody>
           </table>
+
+          <div className="pdf-section-title">Inquiry</div>
+          <table className="pdf-table">
+            <tbody>
+              <tr>
+                <td className="pdf-label">Category</td>
+                <td>{formData.inquiryCategory || '—'}</td>
+              </tr>
+              <tr>
+                <td className="pdf-label" style={{ verticalAlign: 'top' }}>
+                  Customer Query
+                </td>
+                <td style={{ whiteSpace: 'pre-wrap' }}>{formData.customerQuery || '—'}</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <div className="pdf-footer">
+            <div className="pdf-footer-bar" />
+            <p>
+              iDTRONIC GmbH &middot; Automatically generated by LeadSync &middot; {timestamp}
+            </p>
+          </div>
         </div>
       </div>
     </main>
