@@ -2,13 +2,10 @@ import { NextRequest, NextResponse } from 'next/server';
 import axios from 'axios';
 
 interface FormData {
-  firstName: string;
-  lastName: string;
+  fullName: string;
   companyName: string;
   email: string;
   mobileNumber: string;
-  country: string;
-  location: string;
   inquiryCategory: string;
   customerQuery: string;
 }
@@ -73,40 +70,47 @@ function buildEmailBody(formData: FormData, eventName: string, timestamp: string
     <html>
       <head>
         <style>
-          body { font-family: Arial, sans-serif; color: #333; }
-          .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-          .header { background: linear-gradient(135deg, #1e3a6f 0%, #f39200 100%); color: white; padding: 20px; border-radius: 8px 8px 0 0; }
-          table { width: 100%; border-collapse: collapse; margin: 20px 0; }
-          td { padding: 12px; border: 1px solid #e0e0e0; }
-          .label { font-weight: bold; background: #f5f5f5; width: 30%; }
-          .footer { font-size: 12px; color: #999; margin-top: 30px; padding-top: 20px; border-top: 1px solid #e0e0e0; }
+          body { font-family: Arial, sans-serif; color: #1a2333; margin: 0; }
+          .wrapper { max-width: 600px; margin: 0 auto; }
+          .header { background: #1e3a6f; color: white; padding: 28px 24px; border-radius: 10px 10px 0 0; }
+          .logo { display: inline-flex; align-items: center; padding: 8px 16px; border: 2px solid #ffffff; border-radius: 8px; font-weight: 800; font-size: 18px; }
+          .logo-mark { color: #f39200; }
+          .logo-word { color: #ffffff; margin-left: 4px; }
+          .doc-title { margin: 14px 0 0; font-size: 18px; font-weight: 700; }
+          .doc-sub { margin: 4px 0 0; font-size: 13px; color: #cbd5e1; }
+          .body-content { background: #ffffff; padding: 24px; border: 1px solid #e5e8ee; border-top: none; border-radius: 0 0 10px 10px; }
+          .section-title { font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; color: #f39200; margin: 0 0 10px; }
+          table { width: 100%; border-collapse: collapse; margin: 0 0 22px; }
+          td { padding: 11px 12px; border-bottom: 1px solid #e5e8ee; font-size: 14px; }
+          .label { font-weight: 700; color: #1e3a6f; width: 32%; background: #f7f9fc; }
+          .footer { font-size: 11px; color: #99a2b3; text-align: center; margin-top: 24px; }
         </style>
       </head>
       <body>
-        <div class="container">
+        <div class="wrapper">
           <div class="header">
-            <h1 style="margin: 0;">iDTRONIC LeadSync</h1>
-            <p style="margin: 5px 0 0 0;">New Lead Submission</p>
+            <div class="logo"><span class="logo-mark">iD</span><span class="logo-word">TRONIC</span></div>
+            <p class="doc-title">New Lead &mdash; ${eventName}</p>
+            <p class="doc-sub">Submitted ${timestamp}</p>
           </div>
 
-          <table>
-            <tr><td class="label">Event Name</td><td>${eventName}</td></tr>
-            <tr><td class="label">First Name</td><td>${formData.firstName}</td></tr>
-            <tr><td class="label">Last Name</td><td>${formData.lastName}</td></tr>
-            <tr><td class="label">Company Name</td><td>${formData.companyName}</td></tr>
-            <tr><td class="label">Email</td><td>${formData.email}</td></tr>
-            <tr><td class="label">Mobile Number</td><td>${formData.mobileNumber}</td></tr>
-            <tr><td class="label">Country</td><td>${formData.country}</td></tr>
-            <tr><td class="label">Location</td><td>${formData.location}</td></tr>
-            <tr><td class="label">Inquiry Category</td><td>${formData.inquiryCategory}</td></tr>
-            <tr><td class="label">Customer Query</td><td style="white-space: pre-wrap;">${formData.customerQuery}</td></tr>
-            <tr><td class="label">Submitted</td><td>${timestamp}</td></tr>
-          </table>
+          <div class="body-content">
+            <p class="section-title">Contact Information</p>
+            <table>
+              <tr><td class="label">Full Name</td><td>${formData.fullName || '—'}</td></tr>
+              <tr><td class="label">Company</td><td>${formData.companyName || '—'}</td></tr>
+              <tr><td class="label">Email</td><td>${formData.email || '—'}</td></tr>
+              <tr><td class="label">Mobile</td><td>${formData.mobileNumber || '—'}</td></tr>
+            </table>
 
-          <div class="footer">
-            <p>This is an automated email from iDTRONIC LeadSync system.</p>
-            <p>Do not reply to this email.</p>
+            <p class="section-title">Inquiry</p>
+            <table>
+              <tr><td class="label">Category</td><td>${formData.inquiryCategory || '—'}</td></tr>
+              <tr><td class="label" style="vertical-align: top;">Customer Query</td><td style="white-space: pre-wrap;">${formData.customerQuery || '—'}</td></tr>
+            </table>
           </div>
+
+          <p class="footer">iDTRONIC GmbH &middot; Automatically generated by LeadSync &middot; Do not reply to this email</p>
         </div>
       </body>
     </html>
@@ -125,7 +129,7 @@ async function sendEmailViaGraphAPI(
 
     const emailMessage = {
       message: {
-        subject: `LeadSync: New Lead - ${formData.firstName} ${formData.lastName} (${formData.inquiryCategory}) - ${eventName}`,
+        subject: `LeadSync: New Lead - ${formData.fullName} (${formData.inquiryCategory}) - ${eventName}`,
         body: {
           contentType: 'HTML',
           content: emailBody,
