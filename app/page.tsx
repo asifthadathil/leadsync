@@ -201,6 +201,8 @@ export default function Home() {
         <div className="header">
           <svg
             className="logo"
+            width="420"
+            height="100"
             viewBox="0 0 420 100"
             role="img"
             aria-label="iDTRONIC Logo"
@@ -396,8 +398,18 @@ export default function Home() {
           <div className="timestamp">{timestamp}</div>
         </form>
 
-        {/* Hidden div for PDF generation */}
-        <div ref={formRef} style={{ display: 'none', padding: '20px' }}>
+        {/* Off-screen container for PDF generation (html2canvas cannot render display:none elements) */}
+        <div
+          ref={formRef}
+          style={{
+            position: 'absolute',
+            top: 0,
+            left: '-9999px',
+            width: '600px',
+            padding: '20px',
+            background: '#ffffff',
+          }}
+        >
           <div style={{ textAlign: 'center', marginBottom: '20px' }}>
             <strong>iDTRONIC LeadSync</strong>
           </div>
