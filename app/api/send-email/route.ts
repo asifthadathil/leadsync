@@ -139,7 +139,7 @@ async function sendEmailViaGraphAPI(
             address: email,
           },
         })),
-        replyToAddresses: formData.email ? [{ emailAddress: { address: formData.email } }] : [],
+        replyTo: formData.email ? [{ emailAddress: { address: formData.email } }] : [],
       },
       saveToSentItems: true,
     };
