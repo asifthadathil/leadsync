@@ -196,10 +196,7 @@ export default function Home() {
     <main>
       <div className="container">
         <div className="header">
-          <div className="brand-logo" aria-label="iDTRONIC">
-            <span className="brand-logo-mark">iD</span>
-            <span className="brand-logo-word">TRONIC</span>
-          </div>
+          <img src="/logo.png" alt="iDTRONIC" className="brand-logo-img" />
           <h1 className="app-title">LeadSync</h1>
           <p className="help-text">Event Lead Capture</p>
         </div>
@@ -380,10 +377,7 @@ export default function Home() {
           }}
         >
           <div className="pdf-header">
-            <div className="pdf-logo">
-              <span className="pdf-logo-mark">iD</span>
-              <span className="pdf-logo-word">TRONIC</span>
-            </div>
+            <img src="/logo.png" alt="iDTRONIC" className="pdf-logo-img" />
             <div className="pdf-header-text">
               <div className="pdf-doc-title">LEAD CAPTURE REPORT</div>
               <div className="pdf-doc-sub">

@@ -53,27 +53,9 @@ main {
   margin-bottom: 32px;
 }
 
-.brand-logo {
-  display: inline-flex;
-  align-items: center;
-  gap: 2px;
-  padding: 9px 20px;
-  border: 3px solid #1e3a6f;
-  border-radius: 12px;
-  font-family: Arial, Helvetica, sans-serif;
-  font-weight: 800;
-  font-size: 24px;
-  line-height: 1;
-}
-
-.brand-logo-mark {
-  color: #f39200;
-}
-
-.brand-logo-word {
-  color: #1e3a6f;
-  margin-left: 5px;
-  letter-spacing: 0.5px;
+.brand-logo-img {
+  height: 44px;
+  width: auto;
 }
 
 .app-title {
@@ -342,26 +324,10 @@ button {
   border-bottom: 4px solid #1e3a6f;
 }
 
-.pdf-logo {
-  display: inline-flex;
-  align-items: center;
-  gap: 2px;
-  padding: 10px 18px;
-  border: 3px solid #1e3a6f;
-  border-radius: 10px;
-  font-weight: 800;
-  font-size: 22px;
-  line-height: 1;
+.pdf-logo-img {
+  height: 56px;
+  width: auto;
   flex-shrink: 0;
-}
-
-.pdf-logo-mark {
-  color: #f39200;
-}
-
-.pdf-logo-word {
-  color: #1e3a6f;
-  margin-left: 4px;
 }
 
 .pdf-doc-title {
