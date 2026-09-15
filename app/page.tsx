@@ -40,6 +40,8 @@ export default function Home() {
   const [showPdfDownload, setShowPdfDownload] = useState(false);
   const [pdfBlob, setPdfBlob] = useState<Blob | null>(null);
   const [timestamp, setTimestamp] = useState('');
+  const [showPreview, setShowPreview] = useState(false);
+  const [previewBusy, setPreviewBusy] = useState(false);
   const formRef = useRef<HTMLDivElement>(null);
 
   // Load event name from localStorage
@@ -124,7 +126,7 @@ export default function Home() {
     document.body.removeChild(a);
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!eventName) {
@@ -135,19 +137,37 @@ export default function Home() {
       return;
     }
 
+    setStatus({ type: null, text: '' });
+    setShowPreview(true);
+  };
+
+  const handleSaveFromPreview = async () => {
+    setPreviewBusy(true);
+    const blob = await generatePDF();
+    if (blob) {
+      setPdfBlob(blob);
+      downloadPDF(blob);
+    }
+    setPreviewBusy(false);
+  };
+
+  const handleConfirmSend = async () => {
+    setPreviewBusy(true);
     setStatus({ type: 'loading', text: 'Generating PDF...' });
 
-    // Generate PDF
+    // Generate PDF (kept for the manual-download fallback if the send fails below)
     const pdfBlob = await generatePDF();
     if (!pdfBlob) {
       setStatus({
         type: 'error',
         text: 'Failed to generate PDF. Try again.',
       });
+      setPreviewBusy(false);
       return;
     }
 
     setPdfBlob(pdfBlob);
+    setShowPreview(false);
     setStatus({ type: 'loading', text: 'Sending email...' });
 
     try {
@@ -189,6 +209,8 @@ export default function Home() {
         text: 'Email send failed. Please download PDF manually.',
       });
       setShowPdfDownload(true);
+    } finally {
+      setPreviewBusy(false);
     }
   };
 
@@ -334,7 +356,7 @@ export default function Home() {
               className="btn-submit"
               disabled={status.type === 'loading'}
             >
-              {status.type === 'loading' ? 'Processing...' : 'Submit & Send Email'}
+              {status.type === 'loading' ? 'Processing...' : 'Preview & Send'}
             </button>
           </div>
 
@@ -365,84 +387,118 @@ export default function Home() {
 
         <p className="footer-note">iDTRONIC GmbH &middot; Event Lead Capture System</p>
 
-        {/* Off-screen letterhead used to render the branded PDF (html2canvas cannot render display:none elements) */}
-        <div
-          ref={formRef}
-          className="pdf-page"
-          style={{
-            position: 'absolute',
-            top: 0,
-            left: '-9999px',
-            width: '780px',
-          }}
-        >
-          <div className="pdf-header">
-            <img src="/logo.png" alt="iDTRONIC" className="pdf-logo-img" />
-            <div className="pdf-header-text">
-              <div className="pdf-doc-title">LEAD CAPTURE REPORT</div>
-              <div className="pdf-doc-sub">
-                {eventName || 'Event'} &middot; {timestamp}
+        {showPreview && (
+          <div className="preview-overlay" role="dialog" aria-modal="true" aria-label="Email preview">
+            <div className="preview-modal">
+              <div className="preview-modal-header">
+                <h2>Email Preview</h2>
+                <button
+                  type="button"
+                  className="preview-close"
+                  onClick={() => setShowPreview(false)}
+                  aria-label="Close preview"
+                >
+                  &times;
+                </button>
+              </div>
+              <p className="preview-hint">
+                Review the lead details below before sending. You can also save a copy as PDF.
+              </p>
+
+              <div className="preview-scroll">
+                <div className="preview-page-frame">
+                <div ref={formRef} className="pdf-page" style={{ width: '780px' }}>
+                  <div className="pdf-header">
+                    <img src="/logo.png" alt="iDTRONIC" className="pdf-logo-img" />
+                    <div className="pdf-header-text">
+                      <div className="pdf-doc-title">LEAD CAPTURE REPORT</div>
+                      <div className="pdf-doc-sub">
+                        {eventName || 'Event'} &middot; {timestamp}
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="pdf-section-title">Customer Contact Information</div>
+                  <table className="pdf-table">
+                    <tbody>
+                      <tr>
+                        <td className="pdf-label">Full Name</td>
+                        <td>{formData.fullName || '—'}</td>
+                      </tr>
+                      <tr>
+                        <td className="pdf-label">Company</td>
+                        <td>{formData.companyName || '—'}</td>
+                      </tr>
+                      <tr>
+                        <td className="pdf-label">Email</td>
+                        <td>{formData.email || '—'}</td>
+                      </tr>
+                      <tr>
+                        <td className="pdf-label">Mobile</td>
+                        <td>{formData.mobileNumber || '—'}</td>
+                      </tr>
+                    </tbody>
+                  </table>
+
+                  <div className="pdf-section-title">Inquiry</div>
+                  <table className="pdf-table">
+                    <tbody>
+                      <tr>
+                        <td className="pdf-label">Category</td>
+                        <td>{formData.inquiryCategory || '—'}</td>
+                      </tr>
+                      <tr>
+                        <td className="pdf-label">Product Name</td>
+                        <td>{formData.productName || '—'}</td>
+                      </tr>
+                      <tr>
+                        <td className="pdf-label">Qty</td>
+                        <td>{formData.qty || '—'}</td>
+                      </tr>
+                      <tr>
+                        <td className="pdf-label" style={{ verticalAlign: 'top' }}>
+                          Customer Query
+                        </td>
+                        <td style={{ whiteSpace: 'pre-wrap' }}>{formData.customerQuery || '—'}</td>
+                      </tr>
+                      <tr>
+                        <td className="pdf-label">Next Step</td>
+                        <td>{formData.nextStep || '—'}</td>
+                      </tr>
+                    </tbody>
+                  </table>
+
+                  <div className="pdf-footer">
+                    <div className="pdf-footer-bar" />
+                    <p>
+                      iDTRONIC GmbH &middot; Automatically generated by LeadSync &middot; {timestamp}
+                    </p>
+                  </div>
+                </div>
+                </div>
+              </div>
+
+              <div className="preview-actions">
+                <button
+                  type="button"
+                  className="btn-secondary"
+                  onClick={handleSaveFromPreview}
+                  disabled={previewBusy}
+                >
+                  📥 Save as PDF
+                </button>
+                <button
+                  type="button"
+                  className="btn-submit"
+                  onClick={handleConfirmSend}
+                  disabled={previewBusy}
+                >
+                  {previewBusy ? 'Sending...' : '✉️ Send Email'}
+                </button>
               </div>
             </div>
           </div>
-
-          <div className="pdf-section-title">Customer Contact Information</div>
-          <table className="pdf-table">
-            <tbody>
-              <tr>
-                <td className="pdf-label">Full Name</td>
-                <td>{formData.fullName || '—'}</td>
-              </tr>
-              <tr>
-                <td className="pdf-label">Company</td>
-                <td>{formData.companyName || '—'}</td>
-              </tr>
-              <tr>
-                <td className="pdf-label">Email</td>
-                <td>{formData.email || '—'}</td>
-              </tr>
-              <tr>
-                <td className="pdf-label">Mobile</td>
-                <td>{formData.mobileNumber || '—'}</td>
-              </tr>
-            </tbody>
-          </table>
-
-          <div className="pdf-section-title">Inquiry</div>
-          <table className="pdf-table">
-            <tbody>
-              <tr>
-                <td className="pdf-label">Category</td>
-                <td>{formData.inquiryCategory || '—'}</td>
-              </tr>
-              <tr>
-                <td className="pdf-label">Product Name</td>
-                <td>{formData.productName || '—'}</td>
-              </tr>
-              <tr>
-                <td className="pdf-label">Qty</td>
-                <td>{formData.qty || '—'}</td>
-              </tr>
-              <tr>
-                <td className="pdf-label" style={{ verticalAlign: 'top' }}>
-                  Customer Query
-                </td>
-                <td style={{ whiteSpace: 'pre-wrap' }}>{formData.customerQuery || '—'}</td>
-              </tr>
-              <tr>
-                <td className="pdf-label">Next Step</td>
-                <td>{formData.nextStep || '—'}</td>
-              </tr>
-            </tbody>
-          </table>
-
-          <div className="pdf-footer">
-            <div className="pdf-footer-bar" />
-            <p>
-              iDTRONIC GmbH &middot; Automatically generated by LeadSync &middot; {timestamp}
-            </p>
-          </div>
-        </div>
+        )}
       </div>
     </main>
   );

@@ -307,7 +307,95 @@ button {
   color: #b0b7c3;
 }
 
-/* PDF letterhead (rendered off-screen and captured by html2canvas) */
+.preview-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  z-index: 1000;
+}
+
+.preview-modal {
+  background: #ffffff;
+  border-radius: 16px;
+  width: 100%;
+  max-width: 860px;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 30px 60px rgba(0, 0, 0, 0.3);
+  overflow: hidden;
+}
+
+.preview-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 24px;
+  border-bottom: 1px solid #e5e8ee;
+}
+
+.preview-modal-header h2 {
+  font-size: 15px;
+  font-weight: 800;
+  color: #1e3a6f;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+}
+
+.preview-close {
+  background: none;
+  border: none;
+  padding: 0;
+  width: auto;
+  flex: none;
+  font-size: 26px;
+  line-height: 1;
+  text-transform: none;
+  color: #99a2b3;
+  cursor: pointer;
+}
+
+.preview-close:hover {
+  color: #1e3a6f;
+}
+
+.preview-hint {
+  padding: 14px 24px 0;
+  font-size: 13px;
+  color: #667085;
+}
+
+.preview-scroll {
+  overflow-y: auto;
+  overflow-x: auto;
+  padding: 16px 24px 24px;
+  flex: 1;
+}
+
+.preview-page-frame {
+  border: 1px solid #e5e8ee;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.preview-actions {
+  display: flex;
+  gap: 10px;
+  padding: 16px 24px;
+  border-top: 1px solid #e5e8ee;
+}
+
+@media (max-width: 600px) {
+  .preview-actions {
+    flex-direction: column;
+  }
+}
+
+/* PDF letterhead (rendered inside the preview modal and captured by html2canvas) */
 .pdf-page {
   padding: 48px;
   background: #ffffff;
