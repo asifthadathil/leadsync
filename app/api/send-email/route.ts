@@ -76,9 +76,7 @@ function buildEmailBody(formData: FormData, eventName: string, timestamp: string
           body { font-family: Arial, sans-serif; color: #1a2333; margin: 0; }
           .wrapper { max-width: 600px; margin: 0 auto; }
           .header { background: #1e3a6f; color: white; padding: 28px 24px; border-radius: 10px 10px 0 0; }
-          .logo { display: inline-flex; align-items: center; padding: 8px 16px; border: 2px solid #ffffff; border-radius: 8px; font-weight: 800; font-size: 18px; }
-          .logo-mark { color: #f39200; }
-          .logo-word { color: #ffffff; margin-left: 4px; }
+          .logo { height: 36px; }
           .doc-title { margin: 14px 0 0; font-size: 18px; font-weight: 700; }
           .doc-sub { margin: 4px 0 0; font-size: 13px; color: #cbd5e1; }
           .body-content { background: #ffffff; padding: 24px; border: 1px solid #e5e8ee; border-top: none; border-radius: 0 0 10px 10px; }
@@ -92,7 +90,7 @@ function buildEmailBody(formData: FormData, eventName: string, timestamp: string
       <body>
         <div class="wrapper">
           <div class="header">
-            <div class="logo"><span class="logo-mark">iD</span><span class="logo-word">TRONIC</span></div>
+            <img class="logo" src="https://leadsync-i-dtronic.vercel.app/logo.png" alt="iDTRONIC" />
             <p class="doc-title">New Lead &mdash; ${eventName}</p>
             <p class="doc-sub">Submitted ${timestamp}</p>
           </div>
