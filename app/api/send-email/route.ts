@@ -7,7 +7,10 @@ interface FormData {
   email: string;
   mobileNumber: string;
   inquiryCategory: string;
+  productName: string;
+  qty: string;
   customerQuery: string;
+  nextStep: string;
 }
 
 interface RequestBody {
@@ -95,7 +98,7 @@ function buildEmailBody(formData: FormData, eventName: string, timestamp: string
           </div>
 
           <div class="body-content">
-            <p class="section-title">Contact Information</p>
+            <p class="section-title">Customer Contact Information</p>
             <table>
               <tr><td class="label">Full Name</td><td>${formData.fullName || '—'}</td></tr>
               <tr><td class="label">Company</td><td>${formData.companyName || '—'}</td></tr>
@@ -106,7 +109,10 @@ function buildEmailBody(formData: FormData, eventName: string, timestamp: string
             <p class="section-title">Inquiry</p>
             <table>
               <tr><td class="label">Category</td><td>${formData.inquiryCategory || '—'}</td></tr>
+              <tr><td class="label">Product Name</td><td>${formData.productName || '—'}</td></tr>
+              <tr><td class="label">Qty</td><td>${formData.qty || '—'}</td></tr>
               <tr><td class="label" style="vertical-align: top;">Customer Query</td><td style="white-space: pre-wrap;">${formData.customerQuery || '—'}</td></tr>
+              <tr><td class="label">Next Step</td><td>${formData.nextStep || '—'}</td></tr>
             </table>
           </div>
 

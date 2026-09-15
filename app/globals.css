@@ -103,6 +103,19 @@ main {
   color: #f39200;
 }
 
+.form-section-title {
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: #f39200;
+  margin: 28px 0 14px;
+}
+
+.form-section-title:first-of-type {
+  margin-top: 4px;
+}
+
 .event-name-input {
   width: 100%;
   padding: 12px 14px;
@@ -127,6 +140,7 @@ main {
 input[type='text'],
 input[type='email'],
 input[type='tel'],
+input[type='number'],
 select,
 textarea {
   width: 100%;
@@ -148,6 +162,7 @@ textarea {
 input[type='text']:focus,
 input[type='email']:focus,
 input[type='tel']:focus,
+input[type='number']:focus,
 select:focus,
 textarea:focus {
   outline: none;
