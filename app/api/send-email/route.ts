@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import axios from 'axios';
+import { LOGO_PNG_BASE64 } from './logo';
 
 interface FormData {
   fullName: string;
@@ -90,7 +91,7 @@ function buildEmailBody(formData: FormData, eventName: string, timestamp: string
       <body>
         <div class="wrapper">
           <div class="header">
-            <img class="logo" src="https://leadsync-i-dtronic.vercel.app/logo.png" alt="iDTRONIC" />
+            <img class="logo" src="data:image/png;base64,${LOGO_PNG_BASE64}" alt="iDTRONIC" />
             <p class="doc-title">New Lead &mdash; ${eventName}</p>
             <p class="doc-sub">Submitted ${timestamp}</p>
           </div>
