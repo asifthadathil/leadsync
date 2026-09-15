@@ -5,6 +5,8 @@ import { LOGO_PNG_BASE64 } from './logo';
 interface FormData {
   fullName: string;
   companyName: string;
+  companyType: string;
+  companyTypeOther: string;
   email: string;
   mobileNumber: string;
   inquiryCategory: string;
@@ -70,6 +72,11 @@ async function getAccessToken(): Promise<string> {
 }
 
 function buildEmailBody(formData: FormData, eventName: string, timestamp: string): string {
+  const companyTypeDisplay =
+    formData.companyType === 'Other'
+      ? formData.companyTypeOther.trim() || 'Other'
+      : formData.companyType;
+
   return `
     <html>
       <head>
@@ -101,6 +108,7 @@ function buildEmailBody(formData: FormData, eventName: string, timestamp: string
             <table>
               <tr><td class="label">Full Name</td><td>${formData.fullName || '—'}</td></tr>
               <tr><td class="label">Company</td><td>${formData.companyName || '—'}</td></tr>
+              <tr><td class="label">Company Type</td><td>${companyTypeDisplay || '—'}</td></tr>
               <tr><td class="label">Email</td><td>${formData.email || '—'}</td></tr>
               <tr><td class="label">Mobile</td><td>${formData.mobileNumber || '—'}</td></tr>
             </table>

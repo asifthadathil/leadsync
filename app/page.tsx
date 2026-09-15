@@ -8,6 +8,8 @@ import axios from 'axios';
 interface FormData {
   fullName: string;
   companyName: string;
+  companyType: string;
+  companyTypeOther: string;
   email: string;
   mobileNumber: string;
   inquiryCategory: string;
@@ -16,6 +18,19 @@ interface FormData {
   customerQuery: string;
   nextStep: string;
 }
+
+const COMPANY_TYPES = [
+  'System Integrator',
+  'Manufacturer',
+  'Software Company',
+  'Distributor / Reseller',
+  'System House / OEM',
+  'End User / Corporate',
+  'Government / Public Sector',
+  'Research / Academic',
+  'Consultant',
+  'Other',
+];
 
 interface StatusMessage {
   type: 'success' | 'error' | 'loading' | null;
@@ -27,6 +42,8 @@ export default function Home() {
   const [formData, setFormData] = useState<FormData>({
     fullName: '',
     companyName: '',
+    companyType: '',
+    companyTypeOther: '',
     email: '',
     mobileNumber: '',
     inquiryCategory: '',
@@ -73,6 +90,11 @@ export default function Home() {
       [name]: value,
     }));
   };
+
+  const companyTypeDisplay =
+    formData.companyType === 'Other'
+      ? formData.companyTypeOther.trim() || 'Other'
+      : formData.companyType;
 
   const generatePDF = async (): Promise<Blob | null> => {
     if (!formRef.current) return null;
@@ -188,6 +210,8 @@ export default function Home() {
           setFormData({
             fullName: '',
             companyName: '',
+            companyType: '',
+            companyTypeOther: '',
             email: '',
             mobileNumber: '',
             inquiryCategory: '',
@@ -261,6 +285,35 @@ export default function Home() {
               />
             </div>
           </div>
+
+          <div className="form-group">
+            <label className="field-label">Company Type</label>
+            <select
+              name="companyType"
+              value={formData.companyType}
+              onChange={handleInputChange}
+            >
+              <option value="">-- Select Company Type --</option>
+              {COMPANY_TYPES.map((type) => (
+                <option key={type} value={type}>
+                  {type}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {formData.companyType === 'Other' && (
+            <div className="form-group">
+              <label className="field-label">Please Specify</label>
+              <input
+                type="text"
+                name="companyTypeOther"
+                placeholder="Describe the company type"
+                value={formData.companyTypeOther}
+                onChange={handleInputChange}
+              />
+            </div>
+          )}
 
           <div className="two-column">
             <div className="form-group">
@@ -428,6 +481,10 @@ export default function Home() {
                       <tr>
                         <td className="pdf-label">Company</td>
                         <td>{formData.companyName || '—'}</td>
+                      </tr>
+                      <tr>
+                        <td className="pdf-label">Company Type</td>
+                        <td>{companyTypeDisplay || '—'}</td>
                       </tr>
                       <tr>
                         <td className="pdf-label">Email</td>
