@@ -11,7 +11,10 @@ interface FormData {
   email: string;
   mobileNumber: string;
   inquiryCategory: string;
+  productName: string;
+  qty: string;
   customerQuery: string;
+  nextStep: string;
 }
 
 interface StatusMessage {
@@ -27,7 +30,10 @@ export default function Home() {
     email: '',
     mobileNumber: '',
     inquiryCategory: '',
+    productName: '',
+    qty: '',
     customerQuery: '',
+    nextStep: '',
   });
 
   const [status, setStatus] = useState<StatusMessage>({ type: null, text: '' });
@@ -165,7 +171,10 @@ export default function Home() {
             email: '',
             mobileNumber: '',
             inquiryCategory: '',
+            productName: '',
+            qty: '',
             customerQuery: '',
+            nextStep: '',
           });
           setStatus({ type: null, text: '' });
           setShowPdfDownload(false);
@@ -209,6 +218,8 @@ export default function Home() {
         </div>
 
         <form onSubmit={handleSubmit}>
+          <p className="form-section-title">Customer Contact Information</p>
+
           <div className="two-column">
             <div className="form-group">
               <label className="field-label">Full Name</label>
@@ -255,9 +266,11 @@ export default function Home() {
             </div>
           </div>
 
+          <p className="form-section-title">Inquiry</p>
+
           <div className="form-group">
             <label className="field-label">
-              Inquiry Category <span className="required-mark">*</span>
+              Category <span className="required-mark">*</span>
             </label>
             <select
               name="inquiryCategory"
@@ -272,6 +285,30 @@ export default function Home() {
             </select>
           </div>
 
+          <div className="two-column">
+            <div className="form-group">
+              <label className="field-label">Product Name</label>
+              <input
+                type="text"
+                name="productName"
+                placeholder="Product Name"
+                value={formData.productName}
+                onChange={handleInputChange}
+              />
+            </div>
+            <div className="form-group">
+              <label className="field-label">Qty</label>
+              <input
+                type="number"
+                min="0"
+                name="qty"
+                placeholder="Quantity"
+                value={formData.qty}
+                onChange={handleInputChange}
+              />
+            </div>
+          </div>
+
           <div className="form-group">
             <label className="field-label">Customer Query</label>
             <textarea
@@ -279,6 +316,17 @@ export default function Home() {
               placeholder="Describe the customer's question or request"
               rows={4}
               value={formData.customerQuery}
+              onChange={handleInputChange}
+            />
+          </div>
+
+          <div className="form-group">
+            <label className="field-label">Next Step</label>
+            <input
+              type="text"
+              name="nextStep"
+              placeholder="e.g. Send quote, schedule follow-up call"
+              value={formData.nextStep}
               onChange={handleInputChange}
             />
           </div>
@@ -344,7 +392,7 @@ export default function Home() {
             </div>
           </div>
 
-          <div className="pdf-section-title">Contact Information</div>
+          <div className="pdf-section-title">Customer Contact Information</div>
           <table className="pdf-table">
             <tbody>
               <tr>
@@ -374,10 +422,22 @@ export default function Home() {
                 <td>{formData.inquiryCategory || '—'}</td>
               </tr>
               <tr>
+                <td className="pdf-label">Product Name</td>
+                <td>{formData.productName || '—'}</td>
+              </tr>
+              <tr>
+                <td className="pdf-label">Qty</td>
+                <td>{formData.qty || '—'}</td>
+              </tr>
+              <tr>
                 <td className="pdf-label" style={{ verticalAlign: 'top' }}>
                   Customer Query
                 </td>
                 <td style={{ whiteSpace: 'pre-wrap' }}>{formData.customerQuery || '—'}</td>
+              </tr>
+              <tr>
+                <td className="pdf-label">Next Step</td>
+                <td>{formData.nextStep || '—'}</td>
               </tr>
             </tbody>
           </table>
