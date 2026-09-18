@@ -9,17 +9,19 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.126.0",
+    "axios": "^1.6.0",
+    "html2canvas": "^1.4.1",
+    "jspdf": "^2.5.1",
     "next": "^14.0.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "jspdf": "^2.5.1",
-    "html2canvas": "^1.4.1",
-    "axios": "^1.6.0"
+    "zod": "^4.6.5"
   },
   "devDependencies": {
-    "typescript": "^5.0.0",
+    "@types/jspdf": "^2.0.0",
     "@types/node": "^20.0.0",
     "@types/react": "^18.0.0",
-    "@types/jspdf": "^2.0.0"
+    "typescript": "^5.0.0"
   }
 }
