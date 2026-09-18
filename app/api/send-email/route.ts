@@ -7,8 +7,12 @@ interface FormData {
   companyName: string;
   companyType: string;
   companyTypeOther: string;
+  position: string;
+  website: string;
   email: string;
   mobileNumber: string;
+  telephoneNumber: string;
+  address: string;
   inquiryCategory: string;
   productName: string;
   qty: string;
@@ -107,10 +111,14 @@ function buildEmailBody(formData: FormData, eventName: string, timestamp: string
             <p class="section-title">Customer Contact Information</p>
             <table>
               <tr><td class="label">Full Name</td><td>${formData.fullName || '—'}</td></tr>
+              <tr><td class="label">Position</td><td>${formData.position || '—'}</td></tr>
               <tr><td class="label">Company</td><td>${formData.companyName || '—'}</td></tr>
               <tr><td class="label">Company Type</td><td>${companyTypeDisplay || '—'}</td></tr>
+              <tr><td class="label">Website</td><td>${formData.website || '—'}</td></tr>
               <tr><td class="label">Email</td><td>${formData.email || '—'}</td></tr>
               <tr><td class="label">Mobile</td><td>${formData.mobileNumber || '—'}</td></tr>
+              <tr><td class="label">Telephone</td><td>${formData.telephoneNumber || '—'}</td></tr>
+              <tr><td class="label">Address</td><td>${formData.address || '—'}</td></tr>
             </table>
 
             <p class="section-title">Inquiry</p>
