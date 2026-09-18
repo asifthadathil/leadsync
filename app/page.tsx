@@ -10,14 +10,36 @@ interface FormData {
   companyName: string;
   companyType: string;
   companyTypeOther: string;
+  position: string;
+  website: string;
   email: string;
   mobileNumber: string;
+  telephoneNumber: string;
+  address: string;
   inquiryCategory: string;
   productName: string;
   qty: string;
   customerQuery: string;
   nextStep: string;
 }
+
+const EMPTY_FORM_DATA: FormData = {
+  fullName: '',
+  companyName: '',
+  companyType: '',
+  companyTypeOther: '',
+  position: '',
+  website: '',
+  email: '',
+  mobileNumber: '',
+  telephoneNumber: '',
+  address: '',
+  inquiryCategory: '',
+  productName: '',
+  qty: '',
+  customerQuery: '',
+  nextStep: '',
+};
 
 const COMPANY_TYPES = [
   'System Integrator',
@@ -39,21 +61,11 @@ interface StatusMessage {
 
 export default function Home() {
   const [eventName, setEventName] = useState('');
-  const [formData, setFormData] = useState<FormData>({
-    fullName: '',
-    companyName: '',
-    companyType: '',
-    companyTypeOther: '',
-    email: '',
-    mobileNumber: '',
-    inquiryCategory: '',
-    productName: '',
-    qty: '',
-    customerQuery: '',
-    nextStep: '',
-  });
+  const [formData, setFormData] = useState<FormData>(EMPTY_FORM_DATA);
 
   const [status, setStatus] = useState<StatusMessage>({ type: null, text: '' });
+  const [scanStatus, setScanStatus] = useState<StatusMessage>({ type: null, text: '' });
+  const cardInputRef = useRef<HTMLInputElement>(null);
   const [showPdfDownload, setShowPdfDownload] = useState(false);
   const [pdfBlob, setPdfBlob] = useState<Blob | null>(null);
   const [timestamp, setTimestamp] = useState('');
@@ -89,6 +101,55 @@ export default function Home() {
       ...prev,
       [name]: value,
     }));
+  };
+
+  const fileToBase64 = (file: File): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result as string);
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
+  };
+
+  const handleCardFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    e.target.value = '';
+    if (!file) return;
+
+    setScanStatus({ type: 'loading', text: 'Scanning business card...' });
+
+    try {
+      const image = await fileToBase64(file);
+      const response = await axios.post('/api/scan-card', { image });
+
+      if (response.data.success) {
+        const fields = response.data.fields;
+        setFormData((prev) => ({
+          ...prev,
+          fullName: fields.fullName || prev.fullName,
+          companyName: fields.companyName || prev.companyName,
+          position: fields.position || prev.position,
+          website: fields.website || prev.website,
+          email: fields.email || prev.email,
+          mobileNumber: fields.mobileNumber || prev.mobileNumber,
+          telephoneNumber: fields.telephoneNumber || prev.telephoneNumber,
+          address: fields.address || prev.address,
+        }));
+        setScanStatus({
+          type: 'success',
+          text: '✓ Business card scanned — please review the fields below.',
+        });
+      } else {
+        throw new Error(response.data.error || 'Scan failed');
+      }
+    } catch (error: any) {
+      console.error('Card scan error:', error);
+      setScanStatus({
+        type: 'error',
+        text: 'Could not read the business card. Please enter details manually.',
+      });
+    }
   };
 
   const companyTypeDisplay =
@@ -207,20 +268,9 @@ export default function Home() {
         });
         // Reset form after 2 seconds
         setTimeout(() => {
-          setFormData({
-            fullName: '',
-            companyName: '',
-            companyType: '',
-            companyTypeOther: '',
-            email: '',
-            mobileNumber: '',
-            inquiryCategory: '',
-            productName: '',
-            qty: '',
-            customerQuery: '',
-            nextStep: '',
-          });
+          setFormData(EMPTY_FORM_DATA);
           setStatus({ type: null, text: '' });
+          setScanStatus({ type: null, text: '' });
           setShowPdfDownload(false);
         }, 2000);
       } else {
@@ -263,6 +313,31 @@ export default function Home() {
         <form onSubmit={handleSubmit}>
           <p className="form-section-title">Customer Contact Information</p>
 
+          <div className="scan-card-section">
+            <button
+              type="button"
+              className="btn-scan"
+              onClick={() => cardInputRef.current?.click()}
+              disabled={scanStatus.type === 'loading'}
+            >
+              {scanStatus.type === 'loading' ? 'Scanning...' : '📇 Scan Business Card'}
+            </button>
+            <input
+              ref={cardInputRef}
+              type="file"
+              accept="image/*"
+              capture="environment"
+              hidden
+              onChange={handleCardFileChange}
+            />
+            {scanStatus.type && (
+              <div className={`status-message status-${scanStatus.type}`} style={{ marginTop: 12 }}>
+                {scanStatus.type === 'loading' && <span className="spinner"></span>}
+                {scanStatus.text}
+              </div>
+            )}
+          </div>
+
           <div className="two-column">
             <div className="form-group">
               <label className="field-label">Full Name</label>
@@ -275,12 +350,35 @@ export default function Home() {
               />
             </div>
             <div className="form-group">
+              <label className="field-label">Position</label>
+              <input
+                type="text"
+                name="position"
+                placeholder="Job Title"
+                value={formData.position}
+                onChange={handleInputChange}
+              />
+            </div>
+          </div>
+
+          <div className="two-column">
+            <div className="form-group">
               <label className="field-label">Company</label>
               <input
                 type="text"
                 name="companyName"
                 placeholder="Company Name"
                 value={formData.companyName}
+                onChange={handleInputChange}
+              />
+            </div>
+            <div className="form-group">
+              <label className="field-label">Website</label>
+              <input
+                type="text"
+                name="website"
+                placeholder="Company Website"
+                value={formData.website}
                 onChange={handleInputChange}
               />
             </div>
@@ -333,6 +431,29 @@ export default function Home() {
                 name="mobileNumber"
                 placeholder="Mobile Number"
                 value={formData.mobileNumber}
+                onChange={handleInputChange}
+              />
+            </div>
+          </div>
+
+          <div className="two-column">
+            <div className="form-group">
+              <label className="field-label">Telephone</label>
+              <input
+                type="tel"
+                name="telephoneNumber"
+                placeholder="Office / Landline Number"
+                value={formData.telephoneNumber}
+                onChange={handleInputChange}
+              />
+            </div>
+            <div className="form-group">
+              <label className="field-label">Address</label>
+              <input
+                type="text"
+                name="address"
+                placeholder="Company Address"
+                value={formData.address}
                 onChange={handleInputChange}
               />
             </div>
@@ -479,6 +600,10 @@ export default function Home() {
                         <td>{formData.fullName || '—'}</td>
                       </tr>
                       <tr>
+                        <td className="pdf-label">Position</td>
+                        <td>{formData.position || '—'}</td>
+                      </tr>
+                      <tr>
                         <td className="pdf-label">Company</td>
                         <td>{formData.companyName || '—'}</td>
                       </tr>
@@ -487,12 +612,24 @@ export default function Home() {
                         <td>{companyTypeDisplay || '—'}</td>
                       </tr>
                       <tr>
+                        <td className="pdf-label">Website</td>
+                        <td>{formData.website || '—'}</td>
+                      </tr>
+                      <tr>
                         <td className="pdf-label">Email</td>
                         <td>{formData.email || '—'}</td>
                       </tr>
                       <tr>
                         <td className="pdf-label">Mobile</td>
                         <td>{formData.mobileNumber || '—'}</td>
+                      </tr>
+                      <tr>
+                        <td className="pdf-label">Telephone</td>
+                        <td>{formData.telephoneNumber || '—'}</td>
+                      </tr>
+                      <tr>
+                        <td className="pdf-label">Address</td>
+                        <td>{formData.address || '—'}</td>
                       </tr>
                     </tbody>
                   </table>

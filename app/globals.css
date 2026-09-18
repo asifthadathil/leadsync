@@ -85,6 +85,31 @@ main {
   color: #f39200;
 }
 
+.scan-card-section {
+  margin-bottom: 22px;
+  padding: 16px;
+  background: #eef4ff;
+  border: 2px dashed #2d5299;
+  border-radius: 10px;
+  text-align: center;
+}
+
+.btn-scan {
+  background: linear-gradient(135deg, #2d5299 0%, #1e3a6f 100%);
+  color: white;
+  width: 100%;
+  box-shadow: 0 8px 20px -6px rgba(30, 58, 111, 0.4);
+}
+
+.btn-scan:hover:not(:disabled) {
+  transform: translateY(-1px);
+}
+
+.btn-scan:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
 .form-section-title {
   font-size: 11px;
   font-weight: 800;
