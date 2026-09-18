@@ -44,7 +44,11 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ success: false, error: 'Unsupported image format' }, { status: 400 });
     }
 
-    const client = new Anthropic();
+    const client = new Anthropic(
+      process.env.ANTHROPIC_WORKSPACE_ID
+        ? { defaultHeaders: { 'anthropic-workspace-id': process.env.ANTHROPIC_WORKSPACE_ID } }
+        : undefined
+    );
 
     const response = await client.messages.parse({
       model: CLAUDE_VISION_MODEL,
